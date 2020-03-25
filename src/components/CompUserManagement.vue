@@ -13,11 +13,21 @@
    </v-container>
 </template>
 <script>
+  import { mapState,mapMutations } from "vuex";
    import compmanagement from "@/components/managementuser/CompManagement.vue";
    
-   export default {
-     components: {
-       compmanagement,
-     },
-   };
+export default {
+  components: {
+   compmanagement,
+  },
+  created() {
+    this.change(
+    {
+      showpanel: "compfinduser",
+    })
+  },
+  methods: {
+    ...mapMutations(["change","popup"])
+  }
+};
 </script>

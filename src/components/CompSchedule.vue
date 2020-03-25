@@ -27,7 +27,7 @@
                   <!-- Choose Schedule END -->
                   <!-- Choose Service -->
                   <v-stepper-content step="2">
-                     <step2/>
+                     <step2 :key="componentKey"/>
                   </v-stepper-content>
                   <!-- Choose Service END -->
                   <!-- Choose Employee -->
@@ -83,6 +83,7 @@ import step6 from "@/components/schedule/Step6.vue";
 export default {
   data() {
        return {
+        componentKey: 0,
          auxi:[],
        };
      },
@@ -94,6 +95,12 @@ export default {
     step4,
     step5,
     step6
+  },
+  methods:{
+    guarda(){
+      console.log("yes")
+      this.componentKey += 1; 
+    }
   },
 
 

@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue')
+      component: () => import(/* webpackChunkName: "home" */ './views/Login.vue')
     },
     {
       path: '/about',
@@ -28,6 +28,11 @@ export default new Router({
       path: '/recordar-password',
       name: 'recordar',
       component: () => import(/* webpackChunkName: "recordar" */ './views/RememberPass.vue')
+    },
+    {
+      path: '/recuperada',
+      name: 'recuperada',
+      component: () => import(/* webpackChunkName: "recordar" */ './views/recuperada.vue')
     },
     {
       path: '/test-a',

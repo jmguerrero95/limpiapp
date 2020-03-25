@@ -1,5 +1,9 @@
 <template>
-   <div class="login">
+     <div class="login">
+      <v-row>
+     <overlayalert/>
+  </v-row>
+
       <v-card elevation="7"
          max-width="400"
          class="mx-auto mt-5 mb-5"
@@ -67,11 +71,15 @@
 }
 </style>
 <script>
+import overlayalert from '@/components/popups/CompPopsAlert.vue'
 import VueRouter from '../router.js'
 import axios from 'axios'
 import swal from 'sweetalert'
 import { mapState, mapMutations } from "vuex";
 export default {
+  components: {
+    overlayalert,
+  },
   name: "login",
   data() {
     return {
@@ -95,19 +103,26 @@ export default {
       }
     };
   },
+  created(){
+    this.popup({tipo:2,overlay:false})
+    //this.GoNextState(1)
+    //this.UpdateComponent('compshedule')
+
+    localStorage.removeItem('vuex');
+  },
   methods: {
     onSubmit(evt){
       evt.preventDefault()
 
-      const path = 'http://localhost:8000/login'
+      const path = 'https://limpi.app:8000/login'
       axios.post(path, this.form).then((response)=> {
         var info = response
         if (info.data == false) {
-          swal("Datos incorrectos, intente nuevamente", "", "error")
+          //swal("Datos incorrectos, intente nuevamente", "", "error")
+          this.popup({tipo:1,overlay:true})
         }
         else {
           info=JSON.parse(info.data)
-          console.log(info)
           sessionStorage.setItem('id', info['id'])
           sessionStorage.setItem('tipo', info['tipo'])
           this.login(
@@ -124,7 +139,12 @@ export default {
               birthDay: info['birthDay'],
               id_modalidad:0
             })
-          swal({
+          this.popup({tipo:2,overlay:true})
+          setTimeout(alertFunc, 2000)
+          function alertFunc(){
+            VueRouter.push('panel-usuario')
+          }
+          /*swal({
             icon: 'success',
             title: 'Bienvenido',
             button: false,
@@ -134,7 +154,7 @@ export default {
            function pasar(){
             //console.log("hola")
             VueRouter.push('panel-usuario')
-           }
+           }*/
           //swal("Bienvenido", "", "success")
         }
       })
@@ -142,8 +162,8 @@ export default {
         console.log(error)
       })
     },
-    ...mapMutations(["login"]),
-  }
+    ...mapMutations(["login","popup","GoNextState","UpdateComponent"]),
+  },
 }
 </script>
 

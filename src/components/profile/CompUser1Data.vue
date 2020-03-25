@@ -162,7 +162,7 @@ export default {
   created: function(){
     var id = sessionStorage.getItem('id')
     console.log(id)
-    const path = 'http://localhost:8000/api/v1.0/users/'+id+'/'
+    const path = 'https://limpi.app:8000/api/v1.0/users/'+id+'/'
       axios.get(path).then((response)=> {
         response = response.data
         console.log(response['id'])
@@ -179,7 +179,7 @@ export default {
       var obj = {'firs_name': this.form.firs_name, 'last_name': this.form.last_name, 'user_email': this.form.user_email}
       var json = JSON.stringify(obj)
       var id = sessionStorage.getItem('id')
-      const path = 'http://localhost:8000/api/v1.0/users/'+id+'/'
+      const path = 'https://limpi.app:8000/api/v1.0/users/'+id+'/'
       axios.patch(path, obj).then((response)=> {
         this.form.firs_name
         this.form.last_name

@@ -1,5 +1,8 @@
 <template>
    <div class="login">
+    <v-row>
+     <overlayalert/>
+  </v-row>
       <v-card elevation="7"
          max-width="600"
          class="mx-auto mt-5 mb-5"
@@ -13,20 +16,20 @@
          </v-card-title>
          <v-card-text>
             <h1 class="headline text-center">Registrese gratis</h1>
-            <form @submit="onSubmit">
+            <v-form v-model="valid" @submit="onSubmit" ref="formu">
                <v-container fluid>
                   <v-row>
                      <v-col cols="12" xs="12" sm="6" md="6" lg="6" xl="6">
-                        <v-text-field v-model="form.firs_name" :label="firstlabel" :hint="hint" required>  </v-text-field>
+                        <v-text-field v-model="form.firs_name" :rules="[rules.texto]" :label="firstlabel" :hint="hint">  </v-text-field>
                      </v-col>
                      <v-col cols="12" xs="12" sm="6" md="6" lg="6" xl="6">
-                        <v-text-field v-model="form.last_name" :label="lastlabel" :hint="hint" required>  </v-text-field>
+                        <v-text-field v-model="form.last_name" :rules="[rules.texto]" :label="lastlabel" :hint="hint">  </v-text-field>
                      </v-col>
                      <v-col cols="12" xs="12" sm="6" md="6" lg="6" xl="6">
-                        <v-text-field v-model="form.user_email" :label="emailLabel" :rules="emailRules" :hint="hint" required>  </v-text-field>
+                        <v-text-field v-model="form.user_email" :label="emailLabel" :rules="emailRules" :hint="hint">  </v-text-field>
                      </v-col>
                         <v-col cols="12" xs="12" sm="6" md="6" lg="6" xl="6">
-                        <v-text-field v-model="form.confirmEmail" :label="confirmEmailLabel" :rules="confirmEmailRules" :hint="hint" required>  </v-text-field>
+                        <v-text-field v-model="form.confirmEmail" :label="confirmEmailLabel" :rules="confirmEmailRules" :hint="hint">  </v-text-field>
                      </v-col>
                      <v-col cols="12" xs="12" sm="6" md="6" lg="6" xl="6">
                         <v-text-field v-model="form.password" 
@@ -70,7 +73,7 @@
                      </v-icon>
                   </v-btn>
                </div>
-            </form>
+            </v-form>
   
          </v-card-text>
       </v-card>
@@ -90,12 +93,19 @@
 }
 </style>
 <script>
+  import overlayalert from '@/components/popups/CompPopsAlert.vue'
+  import VueRouter from '../router.js'
   import axios from 'axios'
   import swal from 'sweetalert'
+  import { mapState, mapMutations } from "vuex";
 export default {
+  components: {
+    overlayalert,
+  },
   name: "login",
   data() {
     return {
+      valid: true,
       form: {
         firs_name: "",
         last_name: "",
@@ -129,6 +139,8 @@ export default {
       show4: false,
 
       rules: {
+        ///(?=.*[AZfont>)/.test(v)
+        texto: v => /^[A-Z ]+$/i.test(v) || 'Use solo letras',
         required: value => !!value || "Requerido",
         min: v => v.length >= 6 || "Min 6 caractéres",
         emailMatch: () => "The email and password you entered don't match"
@@ -138,21 +150,35 @@ export default {
   methods: {
     onSubmit(evt){
       evt.preventDefault()
-
-      const path = 'http://localhost:8000/api/v1.0/users/'
-      axios.post(path, this.form).then((response)=> {
-        this.form.firs_name
-        this.form.last_name
-        this.form.user_email
-        this.form.password
-        this.form.tipo
-        swal("usuario registrado exitosamente", "", "success")
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    },
-  }
+      if (this.$refs.formu.validate()) {
+        if (this.form.password!=this.form.confirmPassword){
+          this.popup({tipo:11,overlay:true})
+          }else{
+            if(this.form.user_email!=this.form.confirmEmail){
+              this.popup({tipo:10,overlay:true})
+            }else{
+              const path = 'https://limpi.app:8000/api/v1.0/users/'
+              axios.post(path, this.form).then((response)=> {
+                this.form.firs_name
+                this.form.last_name
+                this.form.user_email
+                this.form.password
+                this.form.tipo
+                this.popup({tipo:3,overlay:true})
+                  setTimeout(alertFunc, 2000)
+                  function alertFunc(){
+                    VueRouter.push('login')
+                  }
+              })
+              .catch((error) => {
+                this.popup({tipo:4,overlay:true})
+              })
+        }
+      }
+    }
+  },
+    ...mapMutations(["popup"]),
+}
 }
 </script>
 <style scope>

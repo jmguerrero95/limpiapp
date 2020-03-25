@@ -1,5 +1,6 @@
 <template>
    <v-row justify="center">
+    <overlayalert/>
       <!-- section title -->
       <v-col xs="12" sm="12" md="12" lg="12" xl="12" >
          <v-toolbar flat>
@@ -66,8 +67,8 @@
             <v-card-actions>
                <!-- continue btn -->
                <v-row align="center" justify="center" class="mb-3">
-                  <v-btn color="primary" @click="guardar(), GoNextState(5), resetScrollPage()">Verificar Datos</v-btn>
-                  <v-btn text>Cancelar</v-btn>
+                  <v-btn color="primary" @click="guardar(), resetScrollPage()">Verificar Datos</v-btn>
+                  <v-btn @click="GoNextState(1)">Cancelar</v-btn>
                </v-row>
                <!-- continue btn END -->
             </v-card-actions>
@@ -91,14 +92,18 @@
    }
 </style>
 <script>
+  import overlayalert from '@/components/popups/CompPopsAlert.vue'
    import { mapState, mapMutations } from "vuex";
    export default {
+    components: {
+    overlayalert,
+  },
       data(){
         return{
-          persona: null,
-          lugar: null,
-          observaciones: null,
-          ciudad: null,
+          persona: "",
+          lugar: "",
+          observaciones: "",
+          ciudad: "",
           picker: null,
           disabled: false,
           readonly: false,
@@ -120,16 +125,40 @@
          "servicesComp"
        ])
      },
-   
+    created(){
+      this.popup({tipo:2,overlay:false})
+     },
      methods: {
         guardar(){
-          sessionStorage.setItem('persona', this.persona)
-          sessionStorage.setItem('lugar', this.lugar)
-          sessionStorage.setItem('observaciones', this.observaciones)
-          sessionStorage.setItem('ciudad', this.ciudad)
-          this.step4({persona:this.persona, lugar:this.lugar, observaciones:this.observaciones, ciudad:this.ciudad})
+          if (this.persona==""||this.persona==null) {
+            this.popup({tipo:25,overlay:true})
+          }
+            else{
+              if(this.lugar==""||this.lugar==null){
+                this.popup({tipo:26,overlay:true})
+              }
+              else{
+                if(this.observaciones==""||this.observaciones==null){
+                  this.popup({tipo:27,overlay:true})
+                }
+                else{
+                  if(this.ciudad==""||this.ciudad==null){
+                    this.popup({tipo:28,overlay:true})
+                  }
+                  else{
+                  sessionStorage.setItem('persona', this.persona)
+                  sessionStorage.setItem('lugar', this.lugar)
+                  sessionStorage.setItem('observaciones', this.observaciones)
+                  sessionStorage.setItem('ciudad', this.ciudad)
+                  this.step4({persona:this.persona, lugar:this.lugar, observaciones:this.observaciones, ciudad:this.ciudad})
+                  this.GoNextState(5)
+                  this.resetScrollPage()
+                  }
+                }
+              }
+            }
         },
-       ...mapMutations(["GoNextState", "resetScrollPage", "step4"])
+       ...mapMutations(["GoNextState", "resetScrollPage", "step4", "popup"])
      }
    };
 </script>

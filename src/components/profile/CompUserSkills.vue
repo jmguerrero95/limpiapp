@@ -22,8 +22,7 @@
                   </template>
                </v-expansion-panel-header>
                <v-expansion-panel-content>
-                  <v-checkbox v-for="specialservice of specialServices" :key="specialservice.taskid"  v-model="userInternalSkills" :label="specialservice.skill" :value="specialservice.skill" :disabled="specialservice.edit"></v-checkbox>
-                  {{userInternalSkills}}
+                  <v-checkbox disabled v-for="specialservice of specialServices" :key="specialservice.taskid"  v-model="userInternalSkills" :label="specialservice.skill" :value="specialservice.skill"></v-checkbox>
                </v-expansion-panel-content>
                
             </v-expansion-panel>
@@ -40,10 +39,9 @@
                   </template>
                </v-expansion-panel-header>
                <v-expansion-panel-content>
-                  <v-checkbox v-for="modservice of modalServices" :key="modservice.taskid"  v-model="modCheckService" :label="modservice.servicename"
-                  :value="modservice.servicename" :disabled="modservice.edit"
+                  <v-checkbox disabled v-for="modservice of modalServices" :key="modservice.taskid"  v-model="modCheckService" :label="modservice.servicename"
+                  :value="modservice.servicename"
                   ></v-checkbox>
-                  {{modCheckService}}
                </v-expansion-panel-content>
                
             </v-expansion-panel>
@@ -55,9 +53,6 @@
          </v-expansion-panels>
          <!-- ===== EXPANSION PANEL USER END ===== -->
                 <!-- continue btn -->
-         <v-card-actions>
-            <v-btn color="primary mb-2" v-on:click="skills(userInternalSkills,modCheckService)">Actualizar información</v-btn>
-         </v-card-actions>
          <!-- continue btn END -->
       </v-card>
  
@@ -100,6 +95,49 @@ export default {
       
     };
   },
+  created: function(){
+    var id = sessionStorage.getItem('id')
+    const path = 'https://limpi.app:8000/api/v1.0/users/'+id+'/'
+      axios.get(path).then((response)=> {
+        response = response.data
+        var skill2=response['this_skills']
+        for (var skill in skill2){
+          if (skill2[skill].skill=="Cuidado de menores"){
+            this.userInternalSkills.push("Cuidado de menores")
+          }
+          if (skill2[skill].skill=="Cuidado de adulto mayor"){
+            this.userInternalSkills.push("Cuidado de adulto mayor")
+          }
+          if (skill2[skill].skill=="Atencion a mascotas"){
+            this.userInternalSkills.push("Atencion a mascotas")
+          }
+          if (skill2[skill].skill=="Limpieza zonas comunes"){
+            this.userInternalSkills.push("Limpieza zonas comunes")
+          }
+          if (skill2[skill].skill=="Diligencias y compras"){
+            this.userInternalSkills.push("Diligencias y compras")
+          }
+          if (skill2[skill].skill=="Servicio de cafeteria"){
+            this.userInternalSkills.push("Servicio de cafeteria")
+          }
+          if (skill2[skill].skill=="Preparacion de alimentos"){
+            this.userInternalSkills.push("Preparacion de alimentos")
+          }
+        }
+
+        var mod2=response['this_mod']
+        for (var mod in mod2){
+          if (mod2[mod].modalidad=="Hogar"){
+            this.modCheckService.push("Hogar")
+          }
+          if (mod2[mod].modalidad=="Pymes"){
+            this.modCheckService.push("Pymes")
+          }
+        }
+      })
+      .catch((error) => {
+        this.popup({tipo:4,overlay:true})
+      })},
   methods: {
     skills(skills,mod){
       skills.forEach(guardar)
@@ -109,7 +147,7 @@ export default {
         var id_user = sessionStorage.getItem('id')
         formData.append('id_user',id_user)
         formData.append('skill',elemento)
-        var path = 'http://localhost:8000/api/v1.0/skills/'
+        var path = 'https://limpi.app:8000/api/v1.0/skills/'
         let options = {
           headers: {
             'content-type': 'multipart/form-data'
@@ -126,7 +164,7 @@ export default {
         var id_user = sessionStorage.getItem('id')
         formData.append('id_user',id_user)
         formData.append('modalidad',elemento)
-        var path = 'http://localhost:8000/api/v1.0/tipo_mod/'
+        var path = 'https://limpi.app:8000/api/v1.0/tipo_mod/'
         let options = {
           headers: {
             'content-type': 'multipart/form-data'

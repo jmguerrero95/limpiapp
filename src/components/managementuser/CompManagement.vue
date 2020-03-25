@@ -8,10 +8,11 @@
                   solo
                   label="Buscar usuario ID"
                   prepend-inner-icon="mdi-account-search"
+                  v-model="datos"
                   ></v-text-field>
                   
             </v-toolbar-title>
-              <v-btn color="primary" class="ml-4" @click="ShowFindUser">
+              <v-btn color="primary" class="ml-4" @click="ShowFindUser(), UpdateComponent('editUser')">
                <v-icon left>mdi-account-multiple-plus-outline</v-icon>
                Buscar
             </v-btn>
@@ -23,7 +24,7 @@
          </v-toolbar>
       </v-col>
       <v-col cols="12">
-          <component :is="showpanel"></component>
+          <component :is="this.showpanel"></component>
        
       
           
@@ -33,6 +34,7 @@
 </template>
 <script>
 import axios from 'axios'
+import { mapMutations,mapState } from "vuex";
 import compuserregister from "@/components/managementuser/CompUserRegister.vue";
 import compfinduser from "@/components/managementuser/CompFindUser.vue";
 
@@ -43,18 +45,26 @@ export default {
   },
   data() {
     return {
-      showpanel: "compfinduser"
+      datos: null,
     };
   },
 
 
   methods: {
     ShowUserCreate() {
-      this.showpanel = "compuserregister";
+      //this.showpanel= "compuserregister";
+      this.change(
+      {
+        showpanel: "compuserregister",
+      })
     },
     ShowFindUser() {
-      this.showpanel = "compfinduser";
-    }
+      sessionStorage.setItem('search', this.datos)
+    },
+    ...mapMutations(["change","UpdateComponent"])
+  },
+    computed: {
+    ...mapState(["showpanel"])
   }
 };
 </script>

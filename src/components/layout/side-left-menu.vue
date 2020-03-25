@@ -2,7 +2,7 @@
 
  <!-- LEFT BAR MENU -->
       <v-navigation-drawer
-         v-model="drawer"
+         v-model="menu"
          :clipped="true"
          :mini-variant.sync="mini"
          app
@@ -11,10 +11,13 @@
          <!-- avatar and name profile -->
      
          <v-list-item>
-            <v-list-item-avatar height="48" min-width="48">
-               <v-img src="@/assets/AvatarProfile.jpg"></v-img>
+            <v-list-item-avatar v-if='this.user.image===null||this.user.image=="https://limpi.app:8000null"' height="48" min-width="48" width="48">
+               <img src="@/assets/default-avatar.jpg"></img>
             </v-list-item-avatar>
-            <v-list-item-title>John Doe</v-list-item-title>
+            <v-list-item-avatar v-else height="48" min-width="48" width="48">
+               <img :src="this.user.image"></img>
+            </v-list-item-avatar>
+            <v-list-item-title>{{nombre}}</v-list-item-title>
             <v-btn
                icon
                @click.stop="mini = !mini"
@@ -80,7 +83,7 @@
                </v-list-item-content>
               
             </v-list-item>
-                  <v-list-item link>
+                  <v-list-item link @click="salir()">
                <v-list-item-icon>
                   <v-icon>mdi-exit-to-app</v-icon>
                </v-list-item-icon>
@@ -97,6 +100,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import VueRouter from '../../router.js'
 import { link } from "fs";
 export default {
   components: {
@@ -105,8 +109,9 @@ export default {
   data() {
     return {
       mini: false,
-      drawer: true,
         tipo: "",
+        nombre: "",
+        image: "",
         menuLeft: [
           {
             title: "Perfil cliente",
@@ -137,11 +142,6 @@ export default {
             componetlink: "compprofile"
           },
           {
-            title: "Agendar servicio",
-            icon: "mdi-calendar-text",
-            componetlink: "compshedule"
-          },
-          {
             title: "Servicios activos",
             icon: "mdi-broom",
             componetlink: "compactiveservices"
@@ -159,6 +159,12 @@ export default {
             icon: "mdi-calendar-text",
             componetlink: "compshedule"
           },
+          {
+            title: "Servicios activos",
+            icon: "mdi-broom",
+            componetlink: "compactiveservicesuser"
+          },
+          { title: "Historial", icon: "mdi-history", componetlink: "comphistoryuser" }
         ],
 
       lastButtons: [
@@ -169,13 +175,20 @@ export default {
   },
   created: function(){
     this.tipo = this.user.tipo
-    console.log(this.tipo)
+    this.nombre = this.user.firs_name
+    this.image = this.user.image
+    this.image2 = this.image
+    this.drawer = this.menu
   },
   methods: {
-    ...mapMutations(["UpdateComponent","SupportAction","user"])
+    salir(){
+      localStorage.removeItem('vuex');
+      location.href ="https://limpi.app";
+    },
+    ...mapMutations(["UpdateComponent","SupportAction"])
   },
   computed: {
-    ...mapState(["user"])
+    ...mapState(["user","menu"])
   },
 
 };

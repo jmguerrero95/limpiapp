@@ -1,0 +1,15 @@
+
+> limpiappdev2@0.1.0 serve /home/ubuntu/limpiapp
+> vue-cli-service serve --host 0.0.0.0 --port 8080
+
+ INFO  Starting development server...
+ DONE  Compiled successfully in 35035ms9:48:44 PM
+
+
+  App running at:
+  - Local:   https://localhost:8080/ 
+  - Network: https://limpi.app/
+
+  Note that the development build is not optimized.
+  To create a production build, run npm run build.
+

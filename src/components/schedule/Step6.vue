@@ -22,18 +22,25 @@
     </v-list-item>
 
     <v-card-actions>
-      <v-btn color="primary">Continuar</v-btn>
-      <v-btn color="primary">Agendar otro</v-btn>
+      <v-btn color="primary" @click="reinicio()">Agendar otro</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import {mapstate} from 'vuex'
+import { mapState, mapMutations } from "vuex";
 export default {
 
    methods:{
-
+    reinicio(){
+     sessionStorage.removeItem('fechas');
+     sessionStorage.removeItem('hora');
+     this.$forceUpdate();
+     this.UpdateComponent('compshedule')
+     this.GoNextState(1)
+     this.$emit("guarda")
+    },
+    ...mapMutations(["login","popup","GoNextState","UpdateComponent"]),
    }
    
 }

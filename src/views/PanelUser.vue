@@ -1,8 +1,8 @@
 <template>
    <v-app id="menu-user">
-<v-row v-if="showoverlay">
+<!--<v-row v-if="showoverlay">
      <overlayalert/>
-</v-row>
+</v-row>-->
 
 
       <!-- LAYOUT MENU -->
@@ -49,17 +49,27 @@ import compprofile from "@/components/CompProfile.vue";
 import compprofileuser from "@/components/CompProfileUser.vue";
 import compshedule from "@/components/CompSchedule";
 import compactiveservices from "@/components/CompActiveServices.vue";
+import compactiveservicesuser from "@/components/CompActiveServicesUser.vue";
 import comphistory from "@/components/CompHistory.vue";
-import overlayalert from '@/components/popups/CompPopsAlert.vue'
+import comphistoryuser from "@/components/CompHistoryUser.vue";
+import overlayalert from '@/components/popups/CompPopsAlert.vue';
+import editUser from "@/components/managementuser/editUser.vue";
+import find from "@/components/managementuser/CompFindUser.vue";
 
 
 export default {
   data() {
        return {
+         componentKey: 0,
          auxi:[],
+         drawer: false,
        };
      },
   components: {
+    comphistoryuser,
+    compactiveservicesuser,
+    find,
+    editUser,
     overlayalert,
     compsupport,
     sideleftmenu,
@@ -73,6 +83,16 @@ export default {
   },
   computed: {
     ...mapState(["layoutUserPanel"])
+  },
+  created(){
+    if(localStorage.getItem('vuex')){
+
+    }else{
+      location.href ="https://limpi.app:8080/login";
+    }
+  },
+  methods:{
+
   }
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
    <v-row justify="center">
+   	<overlayalert/>
       <v-col cols="12">
          <v-row>
             <!-- section title -->
@@ -69,6 +70,7 @@
                <v-time-picker
                color="accent"
                full-width
+                  ref="reloj"
                   v-model="picker"
                   ampm-in-title
                   format= "ampm">
@@ -76,10 +78,10 @@
                </v-time-picker>
                <!-- PICKER TIME END -->
                <!-- continue btn -->
-               <v-btn class="mt-4 ml-5" color="primary" @click="fecha(dates, picker), resetScrollPage(), GoNextState(3)">
+               <v-btn class="mt-4 ml-5" color="primary" @click="fecha(dates, picker), resetScrollPage()">
                   Continuar
                </v-btn>
-               <v-btn text>Cancelar</v-btn>
+               <v-btn class="mt-4 ml-5" @click="cancel(), GoNextState(1)">Cancelar</v-btn>
                <!-- continue btn END -->
             </v-col>
          </v-row>
@@ -94,10 +96,14 @@
    }
 </style>
 <script>
-   import { mapMutations, mapActions } from "vuex";
+	import overlayalert from '@/components/popups/CompPopsAlert.vue'
+   import { mapMutations, mapActions, mapState } from "vuex";
    import axios from 'axios'
 
    export default {
+   	components: {
+    overlayalert,
+  },
      data() {
        return {
          picker: null,
@@ -106,29 +112,45 @@
          menu: false
        };
      },
+     created(){
+     	this.popup({tipo:2,overlay:false})
+     },
      methods: {
-      fecha(date, picker){
-        this.step2({date:date, picker:picker})
-        sessionStorage.setItem('fechas', JSON.stringify(date))
-        var fechas = JSON.stringify(date)
-        this.$store.dispatch('loadAuxi', {fechas: fechas})
-        /*var path = 'http://localhost:8000/api/v1.0/agenda_filter/?fechas='+fechas
-        axios.get(path).then((response)=> {
-          this.auxi = response.data
-          console.log(this.auxi)
-        })
-        .catch((error) => {
-          console.log(error)
-        })*/
-        sessionStorage.setItem('hora', picker)
+      cancel(){
+      	this.$refs.reloj.selecting=1
+        this.dates=[]
+        this.picker=null
       },
-       ...mapMutations(["GoNextState","resetScrollPage", "step2"]),
+      fecha(date, picker){
+      	if (date==""||picker==""||picker==null) {
+      		this.popup({tipo:23,overlay:true})
+      	}else{
+	        this.step2({date:date, picker:picker})
+	        sessionStorage.setItem('fechas', JSON.stringify(date))
+	        var fechas = JSON.stringify(date)
+	        var modalidad = this.step1.modalidad
+	        this.$store.dispatch('loadAuxi', {fechas: fechas,modalidad:modalidad})
+	        /*var path = 'http://localhost:8000/api/v1.0/agenda_filter/?fechas='+fechas
+	        axios.get(path).then((response)=> {
+	          this.auxi = response.data
+	          console.log(this.auxi)
+	        })
+	        .catch((error) => {
+	          console.log(error)
+	        })*/
+	        sessionStorage.setItem('hora', picker)
+	        this.$refs.reloj.selecting=1
+	        this.dates=[]
+	        this.picker=null
+	        this.GoNextState(3)
+	    }
+      },
+       ...mapMutations(["GoNextState","resetScrollPage", "step2", "popup"]),
        allowedDates(val) {
          let totalDays = parseInt(val.split("-")[2], 10);
          let month2019 = parseInt(val.split("-")[1], 10);
          switch (month2019) {
            case 9:
-             console.log("Estas en septiembre");
              if (
                totalDays === 1 ||
                totalDays === 7 ||
@@ -140,13 +162,11 @@
                totalDays === 28 ||
                totalDays === 29
              ) {
-               console.log("Dia festivo: " + totalDays);
              } else {
                return totalDays;
              }
              break;
            case 10:
-             console.log("Estas en Octubre");
              if (
                totalDays === 5 ||
                totalDays === 6 ||
@@ -157,13 +177,11 @@
                totalDays === 26 ||
                totalDays === 27
              ) {
-               console.log("Dia festivo: " + totalDays);
              } else {
                return totalDays;
              }
              break;
            case 11:
-             console.log("Estas en Noviembre");
              if (
                totalDays === 2 ||
                totalDays === 3 ||
@@ -175,13 +193,11 @@
                totalDays === 24 ||
                totalDays === 30
              ) {
-               console.log("Dia festivo: " + totalDays);
              } else {
                return totalDays;
              }
              break;
            case 12:
-             console.log("Estas en Diciembre");
              if (
                totalDays === 1 ||
                totalDays === 7 ||
@@ -193,13 +209,15 @@
                totalDays === 28 ||
                totalDays === 29
              ) {
-               console.log("Dia festivo: " + totalDays);
              } else {
                return totalDays;
              }
              break;
          }
        }
-     }
+     },
+     computed: {
+    ...mapState(["step1"])
+  },
    };
 </script>

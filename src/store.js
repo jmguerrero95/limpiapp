@@ -1,13 +1,21 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import  createPersistedState  from  'vuex-persistedstate'
+import SecureLS from "secure-ls";
+var ls = new SecureLS({ isCompression: false });
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
 
   state: {
+    menu: true,
+    eliminar: false,
+    notificacion: 0,
+    showpanel:'compfinduser',
     auxi: 'algo',
+    edad: 'algo',
     layoutUserPanel:
       { activeComponent: 'compshedule', notifications: 4, supportPanel: '', supportactive: null, },
     e1: 0,
@@ -17,7 +25,8 @@ export default new Vuex.Store({
         absolute: true,
         opacity: 0.85,
         overlay: false,
-        zIndex: 9
+        zIndex: 99,
+        boton: false,
       }
     ],
     rollType: [
@@ -34,17 +43,185 @@ export default new Vuex.Store({
         iconWarning: "mdi-information",
       },
       {
-        warningTitle: "Carga completada",
-        warningMessage: "Mensaje enviado con exito",
+        warningTitle: "Error al iniciar sesión",
+        warningMessage: "Verifica que el usuario y/o contraseñas sean correctos e intente de nuevo",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Exito",
+        warningMessage: "Inicio de sesion exitoso, Bienvenido",
         warningColor: "light-green ",
         iconWarning: "mdi-hand-peace",
       },
       {
-        warningTitle: "Carga completada",
-        warningMessage: "Mensaje enviado con exito",
+        warningTitle: "Exito",
+        warningMessage: "Cambios guardados exitosamente",
         warningColor: "light-green ",
         iconWarning: "mdi-hand-peace",
-      }
+      },
+      {
+        warningTitle: "Error al actualizar",
+        warningMessage: "Los datos ingresados ya existen, por favor verifique",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Exito",
+        warningMessage: "Usuario registrado con exito!!",
+        warningColor: "light-green",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Atención",
+        warningMessage: "Esta seguro que desea eliminar el usuario?",
+        warningColor: "amber",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Atención",
+        warningMessage: "Usuario filtrado no esta registrado",
+        warningColor: "amber",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Exito",
+        warningMessage: "Orden aprobada exitosamente!!",
+        warningColor: "light-green",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Revise los campos del formulario señalados e intente nuevamente",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Correos no coinciden, verifique e intente nuevamente",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "password no coinciden, verifique e intente nuevamente",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Nombre no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "apellido no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "cedula no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "email no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "password no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "telefono no debe estar vacia",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "fecha de nacimiento no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "direccion no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "tipo no debe estar vacio",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Exito",
+        warningMessage: "Orden cancelada exitosamente!!",
+        warningColor: "light-green",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Atención",
+        warningMessage: "Esta seguro que desea cancelar la agenda?",
+        warningColor: "amber",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Asegurate de colocar fecha y hora correctamente",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Debe aceptar los terminos y condiciones",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Debe llenar el campo persona a cargo",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Debe llenar el campo direccion",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Debe llenar el campo observaciones",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Debe seleccionar una ciudad",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
+      {
+        warningTitle: "Exito",
+        warningMessage: "Contraseña enviada al correo, revise su bandeja de entrada",
+        warningColor: "light-green ",
+        iconWarning: "mdi-hand-peace",
+      },
+      {
+        warningTitle: "Error",
+        warningMessage: "Correo no registrado en el sistema",
+        warningColor: "red accent-2",
+        iconWarning: "mdi-information",
+      },
     ],
     userData: [
       {
@@ -191,9 +368,12 @@ export default new Vuex.Store({
     },
     step3:{
       id: 0,
+      ident: 0,
       firs_name: 0,
       last_name: 0,
       image: 0,
+      user_email: 0,
+      edad: 0,
     },
     step4:{
       persona:0,
@@ -215,29 +395,107 @@ export default new Vuex.Store({
     }
   },
   actions: {
-      loadAuxi ({commit}, fechas) {
-      var path = 'http://localhost:8000/api/v1.0/agenda_filter/?fechas='+fechas.fechas 
+      loadAuxi ({commit}, fechas, modalidad) {
+      var age=[];
+      var info=[];
+      var path = 'https://limpi.app:8000/api/v1.0/agenda_filter/?fechas='+fechas.fechas+'&modalidad='+fechas.modalidad
       axios
         .get(path)
         .then(data => {
-        commit('auxi_agen',data.data)
+          info=data.data[0]
+          //info=info[0]
+          //info=info[0]
+          info.forEach(edades);
+          function edades(item,index){
+            var fecha = item.birthDay
+            if(fecha){
+              var values=fecha.split("-");
+              var dia = values[2];
+              var mes = values[1];
+              var ano = values[0];
+              // cogemos los valores actuales
+              var fecha_hoy = new Date();
+              var ahora_ano = fecha_hoy.getYear();
+              var ahora_mes = fecha_hoy.getMonth()+1;
+              var ahora_dia = fecha_hoy.getDate();
+       
+              // realizamos el calculo
+              var edad = (ahora_ano + 1900) - ano;
+              if ( ahora_mes < mes )
+              {
+                  edad--;
+              }
+              if ((mes == ahora_mes) && (ahora_dia < dia))
+              {
+                  edad--;
+              }
+              if (edad > 1900)
+              {
+                  edad -= 1900;
+              }
+       
+              // calculamos los meses
+              var meses=0;
+              if(ahora_mes>mes)
+                  meses=ahora_mes-mes;
+              if(ahora_mes<mes)
+                  meses=12-(mes-ahora_mes);
+              if(ahora_mes==mes && dia>ahora_dia)
+                  meses=11;
+       
+              // calculamos los dias
+              var dias=0;
+              if(ahora_dia>dia)
+                  dias=ahora_dia-dia;
+              if(ahora_dia<dia)
+              {
+                  var ultimoDiaMes=new Date(ahora_ano, ahora_mes, 0);
+                  dias=ultimoDiaMes.getDate()-(dia-ahora_dia);
+              }
+              //console.log(edad)
+              Object.defineProperties(info[index],{
+                edad:{
+                  value: edad
+                }
+              })
+              //info.push(edad)
+            }
+            commit('edades',age)
+          }
+        commit('auxi_agen',info)
           /*var info = JSON.stringify(data.data)
           state.fechas = info;
           console.log(info)*/
         })
         .catch(error =>{
-          console.log(error)
         })
     },
   },
   mutations: {
+    bar(state, ocultar){
+      state.menu=ocultar
+    },
+    elimi(state, payload){
+      state.eliminar=payload.eliminar
+    },
+    popup(state, payload){
+      state.overlayAlertGlobal[0].overlay = payload.overlay
+      state.warningMessageType = payload.tipo
+      state.overlayAlertGlobal[0].boton = payload.boton
+    },
+    notificaciones(state, payload){
+      state.notificacion = payload
+    },
+    change(state, payload){
+      state.showpanel = payload.showpanel
+    },
     login(state, payload){
       state.user.id = payload.id
       state.user.firs_name = payload.firs_name
       state.user.last_name = payload.last_name
       state.user.user_email = payload.user_email
       state.user.tipo = payload.tipo
-      state.user.image = payload.image
+      state.user.image = 'https://limpi.app:8000'+payload.image
       state.user.ident = payload.ident
       state.user.userPhone = payload.userPhone
       state.user.user_Address = payload.user_Address
@@ -255,9 +513,12 @@ export default new Vuex.Store({
     },
     step3(state, payload){
       state.step3.id = payload.id
+      state.step3.ident = payload.ident
       state.step3.firs_name = payload.firs_name
       state.step3.last_name = payload.last_name
       state.step3.image = payload.image
+      state.step3.user_email = payload.user_email
+      state.step3.edad = payload.edad
     },
     step4(state, payload){
       state.step4.persona = payload.persona
@@ -271,7 +532,9 @@ export default new Vuex.Store({
     },
     auxi_agen(state, auxi){
       state.auxi = auxi
-      console.log(auxi)
+    },
+    edades(state, edad){
+      state.edad = edad
     },
 
     GoNextState(state, page) {
@@ -308,6 +571,9 @@ export default new Vuex.Store({
         case 'compnotifications':
           state.paneltitle = 'Alertas y notificaciones'
           break;
+        case 'editUser':
+          state.paneltitle = 'editar usuario desde admin'
+          break;
         default:
           state.paneltitle = 'Agendar servicio'
           break;
@@ -324,5 +590,11 @@ export default new Vuex.Store({
 
     }
   },
-
+  plugins: [createPersistedState({
+      storage: {
+        getItem: key => ls.get(key),
+        setItem: (key, value) => ls.set(key, value),
+        removeItem: key => ls.remove(key)
+      }
+    })]
 })

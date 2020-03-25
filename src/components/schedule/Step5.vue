@@ -1,5 +1,6 @@
 <template>
    <v-row align="start" justify="center">
+    <overlayalert/>
       <v-col cols="12">
          <!-- section title -->
          <v-row>
@@ -65,10 +66,15 @@
                               <div class="overline mb-4 ">Auxiliar Disponible</div>
                               <v-list-item-title class="headline mb-1 primary--text">{{step3.firs_name}} {{step3.last_name}}</v-list-item-title>
                            </v-list-item-content>
-                           <v-list-item-avatar
+                           <v-list-item-avatar v-if='step3.image===null'
                               size="100"
                               class="mt-7 mb-7">
-                              <img  :src="'http://localhost:8000'+step3.image" alt="avatar">
+                              <img  src="@/assets/default-avatar.jpg" alt="avatar">
+                           </v-list-item-avatar>
+                           <v-list-item-avatar v-else
+                              size="100"
+                              class="mt-7 mb-7">
+                              <img  :src="'https://limpi.app:8000'+step3.image" alt="avatar">
                            </v-list-item-avatar>
                         </v-list-item>
                         <v-list>
@@ -77,7 +83,7 @@
                                  <v-icon color="primary">mdi-card-bulleted-outline</v-icon>
                               </v-list-item-icon>
                               <v-list-item-content>
-                                 <v-list-item-title>{{step3.id}}</v-list-item-title>
+                                 <v-list-item-title>{{step3.ident}}</v-list-item-title>
                                  <v-list-item-subtitle>ID</v-list-item-subtitle>
                               </v-list-item-content>
                            </v-list-item>
@@ -86,7 +92,7 @@
                                  <v-icon color="primary">mdi-calendar-check</v-icon>
                               </v-list-item-icon>
                               <v-list-item-content>
-                                 <v-list-item-title>{{user.birthDay}} años</v-list-item-title>
+                                 <v-list-item-title>{{step3.edad}} años</v-list-item-title>
                                  <v-list-item-subtitle>Edad</v-list-item-subtitle>
                               </v-list-item-content>
                            </v-list-item>
@@ -179,7 +185,25 @@
                   <!-- terminos y condiciones -->
                   <v-list-item>
                      <v-list-item-content>
-                        <v-checkbox v-model="checkbox">
+                      <v-checkbox v-model="checkbox"><template v-slot:label>
+                              <div>
+                                 He leido los 
+                                 <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                       <a
+                                          target="_blank"
+                                          href="https://local.google.com/place?id=4457522596774763770&use=posts&lpsid=1247708782495473677"
+                                          @click.stop
+                                          v-on="on"
+                                          >
+                                       Términos y condiciones
+                                       </a>
+                                    </template>
+                                    Las condiones del servicio están reguladas, por favor lea y acepte estos términos
+                                 </v-tooltip>
+                              </div>
+                           </template></v-checkbox>
+                        <!--<v-checkbox v-model="checkbox">
                            <template v-slot:label>
                               <div>
                                  He leido los 
@@ -198,14 +222,14 @@
                                  </v-tooltip>
                               </div>
                            </template>
-                        </v-checkbox>
+                        </v-checkbox>-->
                      </v-list-item-content>
                   </v-list-item>
                   <!-- terminos y condiciones END -->
                   <!-- continue btn -->
                   <v-card-actions>
-                     <v-btn color="primary" @click="GoNextState(6), resetScrollPage(), agendar()">CONFIRMO EL SERVICIO</v-btn>
-                     <v-btn text>Cancelar</v-btn>
+                     <v-btn color="primary" @click="agendar()">CONFIRMO EL SERVICIO</v-btn>
+                     <v-btn @click="GoNextState(1)">Cancelar</v-btn>
                   </v-card-actions>
                   <!-- continue btn END -->
                </v-card>
@@ -231,8 +255,12 @@
 </style>
 <script>
 import axios from 'axios'
+import overlayalert from '@/components/popups/CompPopsAlert.vue'
 import { mapState, mapMutations } from "vuex";
 export default {
+  components: {
+    overlayalert,
+  },
   data() {
     return {
       terms: false,
@@ -242,64 +270,70 @@ export default {
       staffSelect: 0
     };
   },
-  methods: {},
+  created(){
+      this.popup({tipo:2,overlay:false})
+     },
   computed: {
-    ...mapState(["userData", "staffData", "step1", "step2", "step3", "step4", "user"])
+    ...mapState(["userData", "staffData", "step1", "step2", "step3", "step4", "user", "notificacion"])
   },
 
   methods: {
    agendar(){
-      var id = sessionStorage.getItem('id')
-      const path = 'http://localhost:8000/api/v1.0/agenda/'
-        /*const path2 = 'http://localhost:8000/api/v1.0/auxi/'*/
-        const formData = new FormData();
-        formData.append('id_user',this.user.id)
-        formData.append('modalidad',this.step1.id_modalidad)
-        formData.append('tipo_servi',this.step1.id_tipo)
-        /*formData.append('tipo',this.datos.tipo)*/
-        /*formData.append('image',this.datos.image)*/
-        formData.append('hora',this.step2.picker)
-        formData.append('id_auxi',this.step3.id)
-        formData.append('pers_Acargo',this.step4.persona)
-        formData.append('direccion',this.step4.lugar)
-        formData.append('observaciones',this.step4.observaciones)
-        formData.append('lugar',this.step4.ciudad)
-        formData.append('estado',1)
-        formData.append('realizado',0)
-        let options = {
-          headers: {
-            'content-type': 'multipart/form-data'
-          }
-        }
-
-      axios.post(path, formData, options).then((response)=> {
-         const path = 'http://localhost:8000/api/v1.0/fech_agend/'
-         var fechas = this.step2.date
-         var i
-         for(i in fechas){
-            console.log(fechas[i])
-            const formData = new FormData();
-            id=response.data.id
-            formData.append('grupo',id)
-            formData.append('fecha',fechas[i])
-            let options = {
-               headers: {
-                  'content-type': 'multipart/form-data'
-               }
+    if(this.checkbox==false){
+      this.popup({tipo:24,overlay:true})
+    }else {
+        var fecha=sessionStorage.getItem('fechas')
+        var id = sessionStorage.getItem('id')
+        const path = 'https://limpi.app:8000/api/v1.0/agenda/?email='+this.user.user_email+'&email_auxi='+this.step3.user_email+'&fechas='+fecha
+          /*const path2 = 'http://localhost:8000/api/v1.0/auxi/'*/
+          const formData = new FormData();
+          formData.append('id_user',this.user.id)
+          formData.append('modalidad',this.step1.id_modalidad)
+          formData.append('tipo_servi',this.step1.id_tipo)
+          /*formData.append('tipo',this.datos.tipo)*/
+          /*formData.append('image',this.datos.image)*/
+          formData.append('hora',this.step2.picker)
+          formData.append('id_auxi',this.step3.id)
+          formData.append('pers_Acargo',this.step4.persona)
+          formData.append('direccion',this.step4.lugar)
+          formData.append('observaciones',this.step4.observaciones)
+          formData.append('lugar',this.step4.ciudad)
+          formData.append('estado',1)
+          formData.append('realizado',0)
+          let options = {
+            headers: {
+              'content-type': 'multipart/form-data'
             }
-            axios.post(path, formData, options).then((response)=>{
+          }
 
-            })
-            .catch((error) => {
-               console.log(error)
-            })
-         }
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+        axios.post(path, formData, options).then((response)=> {
+          this.notificaciones(this.notificacion+1)
+           const path = 'https://limpi.app:8000/api/v1.0/fecha/'
+           var fechas = this.step2.date
+           var i
+           for(i in fechas){
+              const formData = new FormData();
+              id=response.data.id
+              formData.append('grupo',id)
+              formData.append('fecha',fechas[i])
+              let options = {
+                 headers: {
+                    'content-type': 'multipart/form-data'
+                 }
+              }
+              axios.post(path, formData, options).then((response)=>{
+              })
+              .catch((error) => {
+              })
+           }
+        })
+        .catch((error) => {
+        })
+        this.GoNextState(6)
+        this.resetScrollPage()
+      }
     },
-    ...mapMutations(["GoNextState", "resetScrollPage"])
+    ...mapMutations(["GoNextState", "resetScrollPage", "notificaciones", "popup"])
   }
 };
 </script>

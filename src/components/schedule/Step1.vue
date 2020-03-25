@@ -14,8 +14,7 @@
       </v-col>
       <!-- section title END -->
       <!-- Product 2 --> 
-      <v-col cols="12" sm="8" md="6" lg="4" xl="3" v-for="(products, index) of productsList" :key="products.idlist">
-         <v-container>
+      <v-col cols="12" sm="8" md="6" lg="4" xl="4" v-for="(products, index) of productsList" :key="products.idlist">
          <v-card elevation="3">
                   <!--  ============= -->
                   <v-card-title>
@@ -44,22 +43,7 @@
                   </v-tab>
                </v-tabs>
                <v-tabs-items v-model="products.tab">
-                  <v-tab-item value="tab-1">
-                     <v-card flat>
-                        <v-card-text class="text-center">
-                           <v-row justify="center">
-                              <v-col cols="10">
-                                 <div cols="10"  class="text-center">
-                                    <v-icon small color="accent">mdi-arrow-expand-up</v-icon>
-                                 </div>
-                                 <p color="secondary"   class="primary--text mb-2 text-center">
-                                    {{products.productwarning}}
-                                 </p>
-                              </v-col>
-                           </v-row>
-                        </v-card-text>
-                     </v-card>
-                  </v-tab-item>
+                  
                   <v-tab-item value="tab-2">
                      <v-card flat>
                           <v-card-text class="accent--text text-center headline pb-0">{{products.titleA}}</v-card-text>
@@ -106,7 +90,6 @@
             </v-card>
             <!-- ============== -->
          </v-card>
-            </v-container>
       </v-col>
       <!-- Product 2 END --> 
     
@@ -176,43 +159,37 @@ export default {
     hogar(tipo, id){
      if (id == 0) {
       if (tipo == "clasico") {
-        console.log(tipo+" "+id)
         sessionStorage.setItem('modalidad', id)
         sessionStorage.setItem('tipo_serv', 0)
-        this.step1({tipo:"clasico", id_tipo:0, modalidad:"Hogar", id_modalidad:0})
+        this.step1({tipo:"clasico", id_tipo:1, modalidad:"Hogar", id_modalidad:1})
       }else
       if (tipo == "plata") {
-        console.log(tipo+" "+id)
         sessionStorage.setItem('modalidad', id)
         sessionStorage.setItem('tipo_serv', 1)
-        this.step1({tipo:"plata", id_tipo:1, modalidad:"Hogar", id_modalidad:0})
+        this.step1({tipo:"plata", id_tipo:2, modalidad:"Hogar", id_modalidad:1})
       }else
       if (tipo == "oro") {
-        console.log(tipo+" "+id)
         sessionStorage.setItem('modalidad', id)
         sessionStorage.setItem('tipo_serv', 2)
-        this.step1({tipo:"oro", id_tipo:2, modalidad:"Hogar", id_modalidad:0})
+        this.step1({tipo:"oro", id_tipo:3, modalidad:"Hogar", id_modalidad:1})
       }
     }else
       if (id == 1) {
         if (tipo == "clasico") {
-          console.log(tipo+" "+id)
           sessionStorage.setItem('modalidad', id)
           sessionStorage.setItem('tipo_serv', 0)
-          this.step1({tipo:"clasico", id_tipo:0, modalidad:"Pymes", id_modalidad:1})
+          this.step1({tipo:"clasico", id_tipo:1, modalidad:"Pymes", id_modalidad:2})
         }else
         if (tipo == "plata") {
-          console.log(tipo+" "+id)
           sessionStorage.setItem('modalidad', id)
           sessionStorage.setItem('tipo_serv', 1)
-          this.step1({tipo:"plata", id_tipo:1, modalidad:"Pymes", id_modalidad:1})
+          this.step1({tipo:"plata", id_tipo:2, modalidad:"Pymes", id_modalidad:2})
         }else
         if (tipo == "oro") {
-          console.log(tipo+" "+id)
           sessionStorage.setItem('modalidad', id)
           sessionStorage.setItem('tipo_serv', 2)
           this.step1("oro", 2, "Pymes", 1)
-          this.step1({tipo:"oro", id_tipo:2, modalidad:"Pymes", id_modalidad:1})
+          this.step1({tipo:"oro", id_tipo:3, modalidad:"Pymes", id_modalidad:2})
         } 
       }
      },
